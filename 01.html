@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>咖啡配方手冊</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: #e8e6e1;
+  color: #111;
+  min-height: 100vh;
+  padding: 24px 16px 60px;
+}
+.container { max-width: 600px; margin: 0 auto; }
+
+/* ── Header ── */
+.site-header {
+  padding: 32px 20px 28px;
+  border: 2px solid #111;
+  border-radius: 8px;
+  margin-bottom: 32px;
+  background: #fff;
+}
+.site-header h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 2rem; font-weight: 700;
+  letter-spacing: 0.04em; line-height: 1.3; color: #111;
+}
+.site-header p { font-size: 0.85rem; color: #333; margin-top: 8px; letter-spacing: 0.06em; }
+
+/* ── Section label ── */
+.section-label {
+  font-size: 0.68rem; font-weight: 500; letter-spacing: 0.18em;
+  color: #555; text-transform: uppercase; margin: 36px 0 12px;
+}
+
+/* ── Card wrapper (for pin positioning) ── */
+.card-wrap {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+/* ── Pin button ── */
+.pin-btn {
+  position: absolute;
+  top: -10px;
+  right: 14px;
+  z-index: 10;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 28px;
+  height: 32px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+  transition: transform 0.15s ease, filter 0.15s;
+  transform-origin: top center;
+}
+.pin-btn:hover { transform: scale(1.15); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35)); }
+.pin-btn.pinned { transform: rotate(-15deg); }
+.pin-btn.pinned:hover { transform: rotate(-15deg) scale(1.15); }
+
+/* Pin SVG colours */
+.pin-head   { fill: #ccc; transition: fill 0.2s; }
+.pin-needle { fill: #999; transition: fill 0.2s; }
+.pin-btn.pinned .pin-head   { fill: #e04040; }
+.pin-btn.pinned .pin-needle { fill: #b02020; }
+
+/* ── Card ── */
+.card {
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+.card:hover { box-shadow: 0 3px 14px rgba(0,0,0,0.13); }
+
+.card.hot  { background: #f5e8b0; border-color: #c8b060; }
+.card.ice  { background: #c8dff5; border-color: #7aaad0; }
+.card.bubb { background: #b8e8f8; border-color: #60b8d8; }
+.card.food { background: #c0e8b0; border-color: #70b850; }
+.card.note { background: #ebebeb; border-color: #aaa; border-style: dashed; }
+
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 18px; cursor: pointer; user-select: none; gap: 12px;
+}
+.card-header:active { filter: brightness(0.96); }
+
+.card-title-wrap { display: flex; align-items: center; gap: 10px; flex: 1; }
+
+.card-tag {
+  font-size: 0.62rem; font-weight: 500; letter-spacing: 0.1em;
+  border: 1px solid; border-radius: 3px; padding: 2px 7px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.card.hot  .card-tag { border-color: #9a7a10; color: #7a5a00; background: rgba(255,255,255,0.4); }
+.card.ice  .card-tag { border-color: #3070a0; color: #105080; background: rgba(255,255,255,0.4); }
+.card.bubb .card-tag { border-color: #2090b8; color: #006888; background: rgba(255,255,255,0.4); }
+.card.food .card-tag { border-color: #388030; color: #1a6010; background: rgba(255,255,255,0.4); }
+.card.note .card-tag { border-color: #999; color: #666; background: rgba(255,255,255,0.4); }
+
+.card-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.25rem; font-weight: 600; line-height: 1.3;
+}
+
+.card-arrow {
+  width: 22px; height: 22px; flex-shrink: 0;
+  transition: transform 0.25s ease; color: #666;
+}
+.card.open .card-arrow { transform: rotate(180deg); }
+
+/* ── Card Body ── */
+.card-body {
+  display: none;
+  padding: 4px 18px 22px;
+  border-top: 1px solid rgba(0,0,0,0.10);
+}
+.card.open .card-body { display: block; }
+
+.row-material, .row-step { margin-top: 16px; }
+
+.label-sm {
+  font-size: 0.78rem; font-weight: 500; letter-spacing: 0.14em;
+  color: #555; margin-bottom: 10px;
+}
+
+.material-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.material-chip {
+  border-radius: 6px; font-size: 1rem; padding: 7px 13px;
+  color: #222; line-height: 1.5;
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.70);
+  border: 1px solid rgba(0,0,0,0.10);
+}
+.chip-emoji { font-size: 1.1rem; line-height: 1; }
+
+.step-list { list-style: none; counter-reset: steps; }
+.step-list li {
+  counter-increment: steps;
+  display: flex; gap: 12px; padding: 10px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  font-size: 1rem; line-height: 1.7; color: #222;
+}
+.step-list li:last-child { border-bottom: none; }
+.step-list li::before {
+  content: counter(steps);
+  font-size: 0.78rem; font-weight: 700; color: #fff;
+  background: #333; border-radius: 50%;
+  width: 24px; height: 24px; min-width: 24px;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 3px;
+}
+
+.note-bar {
+  margin-top: 12px; font-size: 0.92rem; color: #444;
+  background: rgba(255,255,255,0.55);
+  border-left: 3px solid rgba(0,0,0,0.18);
+  padding: 8px 12px; border-radius: 0 5px 5px 0; line-height: 1.7;
+}
+
+/* 附件知識區 */
+.method-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 8px; }
+.method-item { border: 1px solid #ccc; border-radius: 6px; padding: 12px 14px; background: rgba(255,255,255,0.65); }
+.method-item strong { font-size: 1rem; font-weight: 600; display: block; margin-bottom: 6px; }
+.method-item .flow { font-size: 0.92rem; color: #444; line-height: 1.7; margin-bottom: 5px; }
+.method-item .trait { font-size: 0.9rem; color: #666; font-style: italic; }
+
+.roast-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.roast-chip {
+  flex: 1; min-width: 130px; border: 1px solid #ccc; border-radius: 6px;
+  padding: 12px 14px; font-size: 0.95rem; line-height: 1.6;
+  background: rgba(255,255,255,0.65);
+}
+.roast-chip strong { display: block; font-weight: 600; margin-bottom: 4px; font-size: 1rem; }
+
+/* ── Footer ── */
+.site-footer {
+  margin-top: 40px; padding-top: 20px; border-top: 1px solid #bbb;
+  font-size: 0.72rem; color: #999; text-align: center; letter-spacing: 0.08em;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="site-header">
+    <h1>咖啡配方手冊</h1>
+    <p>RECIPE CARDS · 點選配方展開步驟 · 📌 圖釘記住開關狀態</p>
+  </header>
+
+  <div class="section-label">熱飲</div>
+
+  <!-- 熱美式 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c1" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/>
+        <rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/>
+        <circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/>
+      </svg>
+    </button>
+    <div class="card hot" id="c1">
+      <div class="card-header" onclick="toggleCard('c1')">
+        <div class="card-title-wrap">
+          <span class="card-tag">熱</span>
+          <span class="card-title">美式咖啡</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="row-material">
+          <div class="label-sm">材料</div>
+          <div class="material-list">
+            <span class="material-chip"><span class="chip-emoji">☕</span>義式濃縮液 60cc</span>
+            <span class="material-chip"><span class="chip-emoji">♨️</span>熱水 240cc</span>
+          </div>
+        </div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>萃取 60cc 咖啡液至咖啡杯</li>
+            <li>加入熱水 240cc 至杯子九分滿即可</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 熱招牌拿鐵 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c2" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card hot" id="c2">
+      <div class="card-header" onclick="toggleCard('c2')">
+        <div class="card-title-wrap">
+          <span class="card-tag">熱</span>
+          <span class="card-title">招牌拿鐵</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="row-material">
+          <div class="label-sm">材料</div>
+          <div class="material-list">
+            <span class="material-chip"><span class="chip-emoji">☕</span>義式濃縮液 60cc</span>
+            <span class="material-chip"><span class="chip-emoji">🥛</span>鮮奶 340cc</span>
+          </div>
+        </div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>萃取 60cc 咖啡液至咖啡杯</li>
+            <li>鮮奶 150cc 蒸汽打熱；鮮奶 190cc 奶泡機打出奶泡</li>
+            <li>150cc 熱牛奶倒入咖啡，刮上奶泡，打印圖案</li>
+          </ol>
+        </div>
+        <div class="note-bar">★ 先放奶泡機設定合體 → 按圖案 → 大杯</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 熱肉桂卡布奇諾 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c3" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card hot" id="c3">
+      <div class="card-header" onclick="toggleCard('c3')">
+        <div class="card-title-wrap">
+          <span class="card-tag">熱</span>
+          <span class="card-title">肉桂卡布奇諾</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="row-material">
+          <div class="label-sm">材料（奶⅓ 咖⅓ 奶泡⅓）</div>
+          <div class="material-list">
+            <span class="material-chip"><span class="chip-emoji">☕</span>義式濃縮液 45cc</span>
+            <span class="material-chip"><span class="chip-emoji">🥛</span>鮮奶 340cc</span>
+            <span class="material-chip"><span class="chip-emoji">🍂</span>肉桂粉 適量</span>
+          </div>
+        </div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>咖啡杯中萃取 45cc 咖啡液 + 少許肉桂粉，均質機攪拌均勻</li>
+            <li>鮮奶 120cc 蒸汽打熱；鮮奶 220cc 奶泡機打出奶泡</li>
+            <li>120cc 熱牛奶倒入咖啡，刮上奶泡，均勻撒肉桂粉裝飾</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 熱抹茶拿鐵 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c4" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card hot" id="c4">
+      <div class="card-header" onclick="toggleCard('c4')">
+        <div class="card-title-wrap">
+          <span class="card-tag">熱</span>
+          <span class="card-title">日式抹茶拿鐵</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="row-material">
+          <div class="label-sm">材料</div>
+          <div class="material-list">
+            <span class="material-chip"><span class="chip-emoji">🍵</span>抹茶粉 5g</span>
+            <span class="material-chip"><span class="chip-emoji">♨️</span>熱水 50cc</span>
+            <span class="material-chip"><span class="chip-emoji">🥛</span>牛奶 340cc</span>
+            <span class="material-chip"><span class="chip-emoji">🍬</span>蔗糖 0.5oz</span>
+          </div>
+        </div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>鋼杯放入抹茶粉、蔗糖 0.5oz、熱水 50cc，均質機攪拌均勻</li>
+            <li>鮮奶 150cc 蒸汽打熱；鮮奶約 190cc 奶泡機打出奶泡</li>
+            <li>150cc 熱牛奶倒入抹茶，刮上奶泡，撒抹茶粉裝飾（視狀況）</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 手沖 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c13" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card hot" id="c13">
+      <div class="card-header" onclick="toggleCard('c13')">
+        <div class="card-title-wrap">
+          <span class="card-tag">熱</span>
+          <span class="card-title">手沖咖啡</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="row-material">
+          <div class="label-sm">材料</div>
+          <div class="material-list">
+            <span class="material-chip"><span class="chip-emoji">🫘</span>咖啡豆 15g</span>
+            <span class="material-chip"><span class="chip-emoji">💧</span>水 適量</span>
+          </div>
+        </div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>咖啡豆磨粉</li>
+            <li>溫杯、溫壺</li>
+            <li>咖啡粉倒入沖泡壺，粉拍平，中心點挖洞放 AI 機（檢查水量）</li>
+            <li>按目錄 → 按選 7 → 按沖泡</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">冰飲</div>
+
+  <!-- 冰美式 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c5" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card ice" id="c5">
+      <div class="card-header" onclick="toggleCard('c5')">
+        <div class="card-title-wrap">
+          <span class="card-tag">冰</span>
+          <span class="card-title">美式咖啡</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="row-material">
+          <div class="label-sm">材料</div>
+          <div class="material-list">
+            <span class="material-chip"><span class="chip-emoji">☕</span>義式濃縮液 60cc</span>
+            <span class="material-chip"><span class="chip-emoji">♨️</span>熱水 130cc</span>
+            <span class="material-chip"><span class="chip-emoji">🧊</span>冰塊 適量</span>
+          </div>
+        </div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>萃取 60cc 咖啡液至鋼杯</li>
+            <li>Shake 杯內放入滿杯冰塊 130cc，倒入咖啡液，shake 後即可</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 冰招牌拿鐵 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c6" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card ice" id="c6">
+      <div class="card-header" onclick="toggleCard('c6')">
+        <div class="card-title-wrap">
+          <span class="card-tag">冰</span>
+          <span class="card-title">招牌拿鐵</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="row-material">
+          <div class="label-sm">材料</div>
+          <div class="material-list">
+            <span class="material-chip"><span class="chip-emoji">☕</span>義式濃縮液 60cc</span>
+            <span class="material-chip"><span class="chip-emoji">🥛</span>鮮奶 300cc</span>
+            <span class="material-chip"><span class="chip-emoji">🧊</span>冰塊 120g</span>
+          </div>
+        </div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>鮮奶 190cc 冰奶泡器打發奶泡；冰杯加入冰塊 120g（刻度 7），倒入牛奶 110cc（刻度 7）</li>
+            <li>萃取 60cc 咖啡液，從杯緣慢慢對著冰塊移動倒入，形成牛奶、咖啡、奶泡三層漸層</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 冰肉桂卡布 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c7" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card ice" id="c7">
+      <div class="card-header" onclick="toggleCard('c7')">
+        <div class="card-title-wrap">
+          <span class="card-tag">冰</span>
+          <span class="card-title">肉桂卡布奇諾</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="row-material">
+          <div class="label-sm">材料</div>
+          <div class="material-list">
+            <span class="material-chip"><span class="chip-emoji">☕</span>義式濃縮液 45cc</span>
+            <span class="material-chip"><span class="chip-emoji">🥛</span>鮮奶 300cc</span>
+            <span class="material-chip"><span class="chip-emoji">🍂</span>肉桂粉 適量</span>
+            <span class="material-chip"><span class="chip-emoji">🧊</span>冰塊 120g</span>
+          </div>
+        </div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>咖啡杯中萃取 45cc 咖啡液 + 少許肉桂粉，均質機攪拌均勻</li>
+            <li>鮮奶 190cc 冰奶泡器打發奶泡；冰杯加入冰塊 120g（刻度 7），倒入牛奶 110cc（刻度 7）</li>
+            <li>咖啡液從杯緣緩緩倒入，鋪上奶蓋，撒肉桂粉裝飾</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 冰抹茶拿鐵 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c8" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card ice" id="c8">
+      <div class="card-header" onclick="toggleCard('c8')">
+        <div class="card-title-wrap">
+          <span class="card-tag">冰</span>
+          <span class="card-title">日式抹茶拿鐵</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="row-material">
+          <div class="label-sm">材料</div>
+          <div class="material-list">
+            <span class="material-chip"><span class="chip-emoji">🍵</span>抹茶粉 5g</span>
+            <span class="material-chip"><span class="chip-emoji">♨️</span>熱水 50cc</span>
+            <span class="material-chip"><span class="chip-emoji">🥛</span>牛奶 300cc</span>
+            <span class="material-chip"><span class="chip-emoji">🍬</span>蔗糖 0.5oz</span>
+            <span class="material-chip"><span class="chip-emoji">🧊</span>冰塊 120g</span>
+          </div>
+        </div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>鋼杯放入抹茶粉、熱水 50cc，均質機攪拌均勻</li>
+            <li>鮮奶 190cc 冰奶泡器打發奶泡；冰杯加入冰塊 120g（刻度 7），倒入牛奶 110cc（刻度 7），加入蔗糖 0.5oz</li>
+            <li>抹茶液對著冰塊慢慢移動倒入，鋪上奶蓋，形成牛奶、抹茶、奶泡三層漸層，撒抹茶粉裝飾</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CC 里咖啡 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c9" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card ice" id="c9">
+      <div class="card-header" onclick="toggleCard('c9')">
+        <div class="card-title-wrap">
+          <span class="card-tag">冰</span>
+          <span class="card-title">CC 里咖啡</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="row-material">
+          <div class="label-sm">材料</div>
+          <div class="material-list">
+            <span class="material-chip"><span class="chip-emoji">☕</span>咖啡液 45cc（卡布）</span>
+            <span class="material-chip"><span class="chip-emoji">🍋</span>檸檬汁 25cc</span>
+            <span class="material-chip"><span class="chip-emoji">🍬</span>蔗糖 30cc</span>
+            <span class="material-chip"><span class="chip-emoji">🧊</span>冰塊 150g</span>
+            <span class="material-chip"><span class="chip-emoji">🫧</span>氣泡水 150cc</span>
+          </div>
+        </div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>咖啡杯中萃取 45cc 咖啡液備用</li>
+            <li>冰杯中倒入檸檬汁 25cc、蔗糖 30cc、冰塊 150g（使用秤子）</li>
+            <li>氣泡水（打①）倒入 150cc，攪拌</li>
+            <li>倒入 45cc 咖啡液，產生漸層</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">氣泡飲</div>
+
+  <!-- 蜂蜜檸檬 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c10" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card bubb" id="c10">
+      <div class="card-header" onclick="toggleCard('c10')">
+        <div class="card-title-wrap">
+          <span class="card-tag">冰</span>
+          <span class="card-title">蜂蜜檸檬氣泡水</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="row-material">
+          <div class="label-sm">材料</div>
+          <div class="material-list">
+            <span class="material-chip"><span class="chip-emoji">🍋</span>檸檬汁 30cc</span>
+            <span class="material-chip"><span class="chip-emoji">🍯</span>蜂蜜 60cc</span>
+            <span class="material-chip"><span class="chip-emoji">♨️</span>熱水 10cc</span>
+            <span class="material-chip"><span class="chip-emoji">🧊</span>冰塊 80g</span>
+            <span class="material-chip"><span class="chip-emoji">🫧</span>氣泡水 300cc</span>
+          </div>
+        </div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>杯中倒入檸檬汁；蜂蜜加入 10cc 熱水攪拌</li>
+            <li>加入 80g 冰塊，倒入氣泡水後均勻攪拌</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 可爾必思 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c11" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card bubb" id="c11">
+      <div class="card-header" onclick="toggleCard('c11')">
+        <div class="card-title-wrap">
+          <span class="card-tag">冰</span>
+          <span class="card-title">可爾必思氣泡水</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="row-material">
+          <div class="label-sm">材料</div>
+          <div class="material-list">
+            <span class="material-chip"><span class="chip-emoji">🥤</span>可爾必思 60cc</span>
+            <span class="material-chip"><span class="chip-emoji">🧊</span>冰塊 80g</span>
+            <span class="material-chip"><span class="chip-emoji">🫧</span>氣泡水 300cc</span>
+          </div>
+        </div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>杯中倒入可爾必思，加入 80g 冰塊，倒入氣泡水後均勻攪拌</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 咖啡沙瓦 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c12" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card bubb" id="c12">
+      <div class="card-header" onclick="toggleCard('c12')">
+        <div class="card-title-wrap">
+          <span class="card-tag">冰</span>
+          <span class="card-title">咖啡沙瓦氣泡水</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="row-material">
+          <div class="label-sm">材料</div>
+          <div class="material-list">
+            <span class="material-chip"><span class="chip-emoji">☕</span>義式濃縮 60cc</span>
+            <span class="material-chip"><span class="chip-emoji">🌰</span>榛果 0.8oz</span>
+            <span class="material-chip"><span class="chip-emoji">🧊</span>冰塊 80g</span>
+            <span class="material-chip"><span class="chip-emoji">🫧</span>氣泡水 300cc</span>
+          </div>
+        </div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>杯中倒入冰塊、榛果 + 氣泡水至 8 分滿</li>
+            <li>再倒濃縮至滿杯</li>
+          </ol>
+        </div>
+        <div class="note-bar">P.S. 消泡前送餐</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">食品</div>
+
+  <!-- 薄餅 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c14" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card food" id="c14">
+      <div class="card-header" onclick="toggleCard('c14')">
+        <div class="card-title-wrap">
+          <span class="card-tag">食品</span>
+          <span class="card-title">菌菇黑松露薄餅</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="note-bar" style="margin-top:14px;">▲ 先開烤箱預熱 220°C，需要 5 分鐘</div>
+        <div class="row-step">
+          <div class="label-sm">步驟</div>
+          <ol class="step-list">
+            <li>薄餅放大白瓷盤，進微波按 ③</li>
+            <li>薄餅翻面放烤架上，烤至酥脆帶金黃色，計時約 4 分鐘</li>
+            <li>烤好拿出，再翻面</li>
+            <li>切成 8 片（趁熱切，避免黏刀）</li>
+            <li>放至長形木盤，底部鋪油紙，左右各 4 片，表面撒上巴西里</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">附件</div>
+
+  <!-- 品種知識 -->
+  <div class="card-wrap">
+    <button class="pin-btn" data-id="c-know" onclick="togglePin(this)" title="圖釘：記住狀態">
+      <svg width="22" height="30" viewBox="0 0 22 30" fill="none"><ellipse class="pin-head" cx="11" cy="10" rx="9" ry="9"/><rect class="pin-needle" x="10" y="18" width="2" height="12" rx="1"/><circle fill="rgba(255,255,255,0.4)" cx="8" cy="8" r="3"/></svg>
+    </button>
+    <div class="card note" id="c-know">
+      <div class="card-header" onclick="toggleCard('c-know')">
+        <div class="card-title-wrap">
+          <span class="card-tag">知識</span>
+          <span class="card-title">阿拉比卡咖啡品種知識</span>
+        </div>
+        <svg class="card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-body">
+        <div style="margin-top:16px;">
+          <div class="label-sm">品種介紹</div>
+          <p style="font-size:1rem;line-height:1.8;color:#333;margin-top:6px;">
+            又稱小果咖啡，是世界上最受歡迎的咖啡品種之一，主要用在單品或精品咖啡上。起源於衣索比亞，佔全球咖啡種植面積的 60%。豆形呈狹長橢圓形，特色是咖啡因含量低、脂肪與糖含量高，風味上能呈現出豐富的層次。
+          </p>
+        </div>
+        <div style="margin-top:18px;">
+          <div class="label-sm">生豆處理方式</div>
+          <div class="method-grid">
+            <div class="method-item">
+              <strong>☀️ 日曬法</strong>
+              <div class="flow">採收成熟紅果實 → 清洗篩選 → 陽光曝曬約 2–4 週 → 去除乾果皮與內殼 → 得到生豆</div>
+              <div class="trait">醇厚度高、帶有濃郁果香與酒香</div>
+            </div>
+            <div class="method-item">
+              <strong>💧 水洗法</strong>
+              <div class="flow">採收 → 篩選浮豆 → 去除果皮果肉 → 發酵槽去除果膠（18–36小時）→ 清水清洗 → 乾燥 → 脫殼</div>
+              <div class="trait">風味乾淨、酸質明亮、口感澄澈</div>
+            </div>
+            <div class="method-item">
+              <strong>🌿 半水洗／濕刨法（曼特寧咖啡）</strong>
+              <div class="flow">去皮 → 初步乾燥 → 濕潤狀態下脫殼 → 二次乾燥</div>
+              <div class="trait">印尼特有，低酸、濃厚木質泥土調，風味極具辨識度</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:18px; padding-bottom:4px;">
+          <div class="label-sm">咖啡烘焙程度</div>
+          <div class="roast-row">
+            <div class="roast-chip"><strong>🌤 淺烘焙</strong>帶有明亮果酸與花香</div>
+            <div class="roast-chip"><strong>⛅ 中烘焙</strong>風味平衡，具焦糖香</div>
+            <div class="roast-chip"><strong>🌑 深烘焙</strong>味濃郁、口感厚實，表面帶有油脂</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">咖啡配方手冊 · 僅供內部使用</footer>
+</div>
+
+<script>
+const STORAGE_KEY = 'coffee_card_pins';
+
+// 載入已儲存的圖釘與卡片狀態
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { return {}; }
+}
+function saveState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+// 初始化：依照圖釘狀態決定卡片開關
+function init() {
+  const state = loadState();
+  document.querySelectorAll('.pin-btn').forEach(btn => {
+    const id = btn.dataset.id;
+    if (state[id]) {
+      // 此卡有圖釘 → 恢復為圖釘記錄的開關狀態
+      btn.classList.add('pinned');
+      const card = document.getElementById(id);
+      if (state[id].open) card.classList.add('open');
+    }
+    // 沒圖釘 → 預設收合（不動）
+  });
+}
+
+// 切換卡片開關（標題點擊）
+function toggleCard(id) {
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+  // 若此卡有圖釘，同步更新 localStorage 的 open 狀態
+  const state = loadState();
+  if (state[id]) {
+    state[id].open = card.classList.contains('open');
+    saveState(state);
+  }
+}
+
+// 切換圖釘
+function togglePin(btn) {
+  const id = btn.dataset.id;
+  const card = document.getElementById(id);
+  const state = loadState();
+  if (btn.classList.contains('pinned')) {
+    // 拔掉圖釘
+    btn.classList.remove('pinned');
+    delete state[id];
+  } else {
+    // 插上圖釘，記住當前開關狀態
+    btn.classList.add('pinned');
+    state[id] = { open: card.classList.contains('open') };
+  }
+  saveState(state);
+}
+
+init();
+</script>
+</body>
+</html>
