@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>報名系統管理後台</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap');
+
+:root {
+  --ink:    #1a1a2e;
+  --gold:   #c9a84c;
+  --sage:   #4a7c6f;
+  --rose:   #c0392b;
+  --sky:    #2980b9;
+  --amber:  #e67e22;
+  --bg:     #f2f4f7;
+  --white:  #ffffff;
+  --border: #dde3ec;
+  --shadow: 0 2px 14px rgba(26,26,46,0.07);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── 頂部導覽 ── */
+.topbar {
+  background: var(--ink);
+  color: white;
+  height: 54px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 10;
+}
+.topbar-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.last-update { font-size: 11px; color: rgba(255,255,255,0.45); }
+.btn-refresh {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: 'Noto Sans TC', sans-serif;
+  transition: background 0.2s;
+}
+.btn-refresh:hover { background: rgba(255,255,255,0.2); }
+
+/* ── 主內容 ── */
+.main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 22px 16px 60px;
+}
+
+/* ── 區塊標題 ── */
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8a95a3;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 28px 0 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-title::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: var(--border);
+}
+
+/* ── 統計卡片 ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 14px 14px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition: transform 0.2s;
+  border-top: 3px solid transparent;
+}
+.stat-card:hover { transform: translateY(-2px); }
+.stat-card.c-gold   { border-top-color: var(--gold); }
+.stat-card.c-sage   { border-top-color: var(--sage); }
+.stat-card.c-rose   { border-top-color: var(--rose); }
+.stat-card.c-sky    { border-top-color: var(--sky);  }
+.stat-emoji  { font-size: 20px; margin-bottom: 6px; }
+.stat-value  {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 30px; font-weight: 700;
+  color: var(--ink); line-height: 1;
+}
+.stat-label  { font-size: 11px; color: #9aa; margin-top: 5px; }
+
+/* ── 圖表卡 ── */
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 560px) {
+  .chart-grid { grid-template-columns: 1fr; }
+}
+
+.chart-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 16px;
+  box-shadow: var(--shadow);
+}
+.chart-title {
+  font-size: 13px; font-weight: 600;
+  color: #666; margin-bottom: 16px;
+  letter-spacing: 0.3px;
+}
+.bar-row { margin-bottom: 13px; }
+.bar-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px; color: var(--ink);
+  margin-bottom: 5px;
+}
+.bar-count { font-weight: 600; font-size: 12px; color: #888; }
+.bar-track {
+  height: 7px; background: #eef;
+  border-radius: 4px; overflow: hidden;
+}
+.bar-fill {
+  height: 100%; border-radius: 4px;
+  transition: width 0.9s cubic-bezier(0.4,0,0.2,1);
+}
+.empty-msg { font-size: 13px; color: #bbb; text-align: center; padding: 14px 0; }
+
+/* ── 設定卡 ── */
+.settings-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 6px 18px 18px;
+  box-shadow: var(--shadow);
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.setting-row:last-of-type { border-bottom: none; }
+.setting-row.col { flex-direction: column; align-items: flex-start; }
+
+.setting-label { font-size: 14px; font-weight: 500; color: var(--ink); }
+.setting-desc  { font-size: 12px; color: #aab; margin-top: 2px; }
+
+/* ── 開關 ── */
+.toggle-group { display: flex; align-items: center; gap: 9px; }
+.toggle-text  { font-size: 13px; font-weight: 600; min-width: 28px; }
+.toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+.toggle input { opacity:0; width:0; height:0; }
+.slider {
+  position: absolute; inset: 0;
+  background: #d0d5dd; border-radius: 24px;
+  cursor: pointer; transition: 0.3s;
+}
+.slider::before {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  left: 3px; bottom: 3px;
+  background: white; border-radius: 50%;
+  transition: 0.3s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+}
+input:checked + .slider { background: var(--sage); }
+input:checked + .slider::before { transform: translateX(20px); }
+
+/* ── 日期輸入 ── */
+input[type="date"] {
+  padding: 8px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Noto Sans TC', sans-serif;
+  color: var(--ink);
+  outline: none; cursor: pointer;
+  background: white;
+}
+input[type="date"]:focus { border-color: var(--gold); }
+
+/* ── 梯次輸入 ── */
+.session-row {
+  display: flex; gap: 8px; width: 100%; margin-top: 10px;
+}
+.session-input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'Noto Sans TC', sans-serif;
+  color: var(--ink); outline: none;
+  background: white;
+}
+.session-input:focus { border-color: var(--gold); }
+
+/* ── 儲存按鈕 ── */
+.btn-save {
+  margin-top: 16px;
+  width: 100%; padding: 13px;
+  background: linear-gradient(135deg, #c9a84c, #a8822a);
+  color: white; border: none;
+  border-radius: 10px;
+  font-size: 14px; font-weight: 500;
+  font-family: 'Noto Sans TC', sans-serif;
+  cursor: pointer; letter-spacing: 0.5px;
+  box-shadow: 0 4px 14px rgba(168,130,42,0.28);
+  transition: all 0.2s;
+}
+.btn-save:hover { transform: translateY(-1px); }
+.btn-save:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.save-msg {
+  text-align: center; font-size: 13px;
+  margin-top: 10px; min-height: 18px;
+  font-weight: 500;
+}
+.save-msg.ok  { color: var(--sage); }
+.save-msg.err { color: var(--rose); }
+
+/* ── Loading ── */
+.loading-main {
+  text-align: center;
+  padding: 60px 0; color: #aaa; font-size: 14px;
+}
+.spinner-lg {
+  width: 30px; height: 30px;
+  border: 2.5px solid #dde;
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: 0 auto 14px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">⚙️ 報名系統管理後台</div>
+  <div class="topbar-right">
+    <span class="last-update" id="lastUpdate"></span>
+    <button class="btn-refresh" onclick="loadAll()">↺ 重新整理</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Loading -->
+  <div id="loadingMain" class="loading-main">
+    <div class="spinner-lg"></div>
+    載入資料中⋯
+  </div>
+
+  <div id="mainContent" class="hidden">
+
+    <!-- ── 統計總覽 ── -->
+    <div class="section-title">📊 統計總覽</div>
+    <div class="stats-grid">
+      <div class="stat-card c-gold">
+        <div class="stat-emoji">👥</div>
+        <div class="stat-value" id="st_total">—</div>
+        <div class="stat-label">報名總人數</div>
+      </div>
+      <div class="stat-card c-sage">
+        <div class="stat-emoji">✅</div>
+        <div class="stat-value" id="st_active">—</div>
+        <div class="stat-label">有效報名</div>
+      </div>
+      <div class="stat-card c-rose">
+        <div class="stat-emoji">❌</div>
+        <div class="stat-value" id="st_cancelled">—</div>
+        <div class="stat-label">已取消</div>
+      </div>
+      <div class="stat-card c-sky">
+        <div class="stat-emoji">🤝</div>
+        <div class="stat-value" id="st_friends">—</div>
+        <div class="stat-label">同行人次</div>
+      </div>
+    </div>
+
+    <!-- ── 圖表 ── -->
+    <div class="section-title">📈 詳細分析</div>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-title">各梯次報名人數</div>
+        <div id="sessionChart"><div class="empty-msg">尚無資料</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">各班別報名人數</div>
+        <div id="groupChart"><div class="empty-msg">尚無資料</div></div>
+      </div>
+    </div>
+
+    <!-- ── 系統設定 ── -->
+    <div class="section-title">🔧 系統設定</div>
+    <div class="settings-card">
+
+      <!-- 報名開關 -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">報名系統狀態</div>
+          <div class="setting-desc">關閉後使用者無法進入報名流程</div>
+        </div>
+        <div class="toggle-group">
+          <span class="toggle-text" id="toggleText">開放</span>
+          <label class="toggle">
+            <input type="checkbox" id="sysOpen" onchange="updateToggle()">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 取消截止日 -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">取消報名截止日期</div>
+          <div class="setting-desc">截止日當天起不可取消</div>
+        </div>
+        <input type="date" id="cancelDeadline">
+      </div>
+
+      <!-- 梯次名稱 -->
+      <div class="setting-row col">
+        <div>
+          <div class="setting-label">梯次名稱設定</div>
+          <div class="setting-desc">修改後報名頁面的梯次選項同步更新</div>
+        </div>
+        <div class="session-row">
+          <input class="session-input" id="s1" placeholder="第一梯次">
+          <input class="session-input" id="s2" placeholder="第二梯次">
+          <input class="session-input" id="s3" placeholder="第三梯次">
+        </div>
+      </div>
+
+      <button class="btn-save" id="btnSave" onclick="saveSettings()">儲存設定</button>
+      <div class="save-msg" id="saveMsg"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ▼▼▼ 與 index.html 相同的 GAS Web App 網址 ▼▼▼
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxBjxIekJbeloAQWTfpCezfoRS8tkWgClu4cNTHYn5j6KTrafPnm2Cl9oO1zNuBktwRsw/exec';
+// ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+const BAR_COLORS = ['#c9a84c','#4a7c6f','#2980b9','#8e6bbf','#e67e22','#16a085'];
+
+async function api(action, payload = {}) {
+  const res = await fetch(GAS_URL, {
+    method: 'POST',
+    mode: 'cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action, ...payload })
+  });
+  return res.json();
+}
+
+async function loadAll() {
+  document.getElementById('loadingMain').classList.remove('hidden');
+  document.getElementById('mainContent').classList.add('hidden');
+
+  try {
+    const stats = await api('getStats');
+    renderStats(stats);
+    renderConfig(stats.config);
+    document.getElementById('lastUpdate').innerText =
+      '更新：' + new Date().toLocaleTimeString('zh-TW');
+    document.getElementById('loadingMain').classList.add('hidden');
+    document.getElementById('mainContent').classList.remove('hidden');
+  } catch(e) {
+    document.getElementById('loadingMain').innerHTML =
+      '<p style="color:#c0392b;margin-top:20px">載入失敗，請重新整理</p>';
+  }
+}
+
+function renderStats(s) {
+  document.getElementById('st_total').innerText     = s.total + s.cancelled;
+  document.getElementById('st_active').innerText    = s.active;
+  document.getElementById('st_cancelled').innerText = s.cancelled;
+  document.getElementById('st_friends').innerText   = s.friendsCount;
+  renderBar('sessionChart', s.sessionMap, s.active);
+  renderBar('groupChart',   s.groupMap,   s.active);
+}
+
+function renderBar(id, map, total) {
+  const el      = document.getElementById(id);
+  const entries = Object.entries(map).sort((a,b) => b[1] - a[1]);
+  if (!entries.length || entries.every(e => e[1] === 0)) {
+    el.innerHTML = '<div class="empty-msg">尚無資料</div>'; return;
+  }
+  el.innerHTML = '';
+  entries.forEach(([key, val], i) => {
+    const pct = total > 0 ? Math.round(val / total * 100) : 0;
+    const div = document.createElement('div');
+    div.className = 'bar-row';
+    div.innerHTML = `
+      <div class="bar-meta">
+        <span>${key}</span>
+        <span class="bar-count">${val} 人 ${pct}%</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:0%;background:${BAR_COLORS[i % BAR_COLORS.length]}"></div>
+      </div>`;
+    el.appendChild(div);
+    setTimeout(() => div.querySelector('.bar-fill').style.width = pct + '%', 80 + i * 60);
+  });
+}
+
+function renderConfig(cfg) {
+  document.getElementById('sysOpen').checked = cfg.systemOpen;
+  updateToggle();
+  if (cfg.cancelDeadline) {
+    document.getElementById('cancelDeadline').value =
+      new Date(cfg.cancelDeadline).toISOString().split('T')[0];
+  }
+  if (cfg.sessions) {
+    document.getElementById('s1').value = cfg.sessions[0] || '';
+    document.getElementById('s2').value = cfg.sessions[1] || '';
+    document.getElementById('s3').value = cfg.sessions[2] || '';
+  }
+}
+
+function updateToggle() {
+  const open = document.getElementById('sysOpen').checked;
+  const el   = document.getElementById('toggleText');
+  el.innerText   = open ? '開放' : '關閉';
+  el.style.color = open ? '#4a7c6f' : '#c0392b';
+}
+
+async function saveSettings() {
+  const btn = document.getElementById('btnSave');
+  const msg = document.getElementById('saveMsg');
+  btn.disabled = true;
+  msg.innerText = ''; msg.className = 'save-msg';
+
+  try {
+    await api('saveConfig', {
+      config: {
+        systemOpen     : document.getElementById('sysOpen').checked,
+        cancelDeadline : document.getElementById('cancelDeadline').value || null,
+        sessions: [
+          document.getElementById('s1').value || '第一梯次',
+          document.getElementById('s2').value || '第二梯次',
+          document.getElementById('s3').value || '第三梯次'
+        ]
+      }
+    });
+    msg.innerText = '✓ 設定已儲存';
+    msg.classList.add('ok');
+    setTimeout(() => { msg.innerText = ''; msg.className = 'save-msg'; }, 3000);
+  } catch(e) {
+    msg.innerText = '儲存失敗，請重試';
+    msg.classList.add('err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+loadAll();
+</script>
+</body>
+</html>
