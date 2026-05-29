@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>護肝五款花茶 · 中醫夏季養生</title>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+TC:wght@300;400;600&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1208;
+    --rice: #f5efe0;
+    --parchment: #ede3ca;
+    --aged: #c9b99a;
+    --rust: #8b3a2a;
+    --jade: #3d6b52;
+    --gold: #b8892a;
+    --sage: #6b7c5e;
+    --blush: #c4705a;
+    --deep: #2c1f0e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; font-size: 18px; }
+
+  body {
+    background: var(--rice);
+    color: var(--ink);
+    font-family: 'Noto Serif TC', 'ZCOOL XiaoWei', serif;
+    overflow-x: hidden;
+    /* 桌面端置中，最寬 600px */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* 頁面寬度全局限制 */
+  body > * {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  /* Texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.6;
+    max-width: none; /* texture 不受限制 */
+  }
+
+  /* 桌面端背景延伸 */
+  @media (min-width: 601px) {
+    body {
+      background:
+        linear-gradient(to bottom, #ede3ca 0%, var(--rice) 120px);
+    }
+    html { background: #e8ddc8; }
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.8rem 3rem;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(107,124,94,0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 80% at 80% 80%, rgba(184,137,42,0.07) 0%, transparent 60%);
+  }
+
+  .hero-ornament {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: clamp(5rem, 36vw, 11rem);
+    color: rgba(107,124,94,0.10);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    user-select: none;
+    letter-spacing: -0.05em;
+    white-space: nowrap;
+  }
+
+  .season-badge {
+    display: inline-block;
+    border: 1px solid var(--aged);
+    color: var(--jade);
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    padding: 0.4em 1.4em;
+    margin-bottom: 2.2rem;
+    position: relative;
+  }
+  .season-badge::before, .season-badge::after {
+    content: '✦';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 0.65rem;
+  }
+  .season-badge::before { left: 0.5em; }
+  .season-badge::after { right: 0.5em; }
+
+  .hero-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: clamp(2.8rem, 14vw, 4.2rem);
+    color: var(--deep);
+    line-height: 1.25;
+    position: relative;
+    margin-bottom: 1.2rem;
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+    color: var(--sage);
+    letter-spacing: 0.1em;
+    max-width: 28rem;
+    line-height: 2;
+    position: relative;
+  }
+
+  .hero-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem auto;
+    width: min(20rem, 88%);
+  }
+  .hero-divider span { flex: 1; height: 1px; background: var(--aged); }
+  .hero-divider i { color: var(--gold); font-size: 1rem; font-style: normal; }
+
+  .scroll-hint {
+    margin-top: 2.5rem;
+    color: var(--aged);
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    animation: fadeFloat 2.5s ease-in-out infinite;
+  }
+
+  @keyframes fadeFloat {
+    0%, 100% { opacity: 0.4; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(6px); }
+  }
+
+  /* TCM Principle banner */
+  .principle-bar {
+    background: var(--jade);
+    color: var(--rice);
+    padding: 1.4rem 1.8rem;
+    text-align: center;
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+    line-height: 2;
+    position: relative;
+    overflow: hidden;
+  }
+  .principle-bar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 60px,
+      rgba(255,255,255,0.03) 60px,
+      rgba(255,255,255,0.03) 61px
+    );
+  }
+  .principle-bar strong {
+    color: #d4b96a;
+    font-weight: 400;
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.15em;
+  }
+
+  /* Section header */
+  .section-label {
+    text-align: center;
+    padding: 3rem 1.5rem 0;
+  }
+  .section-label h2 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2rem;
+    color: var(--deep);
+    margin-bottom: 0.5rem;
+  }
+  .section-label p {
+    font-size: 0.78rem;
+    color: var(--aged);
+    letter-spacing: 0.18em;
+  }
+
+  /* Tea cards */
+  .teas {
+    padding: 2rem 1.2rem 5rem;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .tea-card {
+    background: #fff9ee;
+    border: 1px solid var(--parchment);
+    border-left: 6px solid var(--jade);
+    border-radius: 2px 8px 8px 2px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(44,31,14,0.07);
+    transition: box-shadow 0.3s, transform 0.3s;
+    opacity: 0;
+    transform: translateY(28px);
+    animation: cardReveal 0.6s ease forwards;
+  }
+
+  .tea-card:nth-child(1) { animation-delay: 0.1s; border-left-color: #b05a7a; }
+  .tea-card:nth-child(2) { animation-delay: 0.2s; border-left-color: #4a7fb5; }
+  .tea-card:nth-child(3) { animation-delay: 0.3s; border-left-color: #7a9a5a; }
+  .tea-card:nth-child(4) { animation-delay: 0.4s; border-left-color: #b8892a; }
+  .tea-card:nth-child(5) { animation-delay: 0.5s; border-left-color: #c4504a; }
+
+  @keyframes cardReveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .tea-card:hover {
+    box-shadow: 0 8px 32px rgba(44,31,14,0.13);
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.4rem 1.4rem 1rem;
+    border-bottom: 1px solid var(--parchment);
+  }
+
+  .card-icon {
+    font-size: 2.6rem;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+  }
+
+  .card-meta { flex: 1; }
+
+  .card-num {
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    color: var(--aged);
+    margin-bottom: 0.25rem;
+  }
+
+  .card-name {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.75rem;
+    color: var(--deep);
+    line-height: 1.2;
+  }
+
+  .card-tag {
+    font-size: 0.85rem;
+    color: var(--jade);
+    letter-spacing: 0.1em;
+    margin-top: 0.3rem;
+  }
+
+  .card-body {
+    padding: 1.2rem 1.4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .info-block { }
+
+  .info-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    color: var(--jade);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  .info-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--parchment);
+  }
+
+  .info-text {
+    font-size: 1rem;
+    line-height: 2;
+    color: #3a2e1e;
+  }
+
+  .formula-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+  }
+
+  .pill {
+    background: var(--parchment);
+    border: 1px solid var(--aged);
+    border-radius: 100px;
+    padding: 0.3em 1em;
+    font-size: 0.9rem;
+    color: var(--deep);
+    letter-spacing: 0.05em;
+  }
+
+  .brew-steps {
+    background: rgba(61,107,82,0.06);
+    border-left: 3px solid var(--jade);
+    border-radius: 0 4px 4px 0;
+    padding: 1rem 1.1rem;
+    font-size: 0.95rem;
+    line-height: 2;
+    color: #2e3d2a;
+  }
+
+  .warning-box {
+    background: rgba(139,58,42,0.06);
+    border: 1px solid rgba(139,58,42,0.2);
+    border-radius: 6px;
+    padding: 0.9rem 1.1rem;
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: var(--rust);
+    display: flex;
+    gap: 0.6rem;
+  }
+  .warning-box .warn-icon { flex-shrink: 0; font-size: 1.1rem; margin-top: 0.1rem; }
+
+  .case-box {
+    background: rgba(201,185,154,0.15);
+    border-radius: 6px;
+    padding: 1rem 1.1rem;
+    font-size: 0.95rem;
+    line-height: 2;
+    color: #4a3c28;
+    border-top: 2px solid var(--gold);
+    position: relative;
+  }
+  .case-box::before {
+    content: '病案';
+    position: absolute;
+    top: -0.7em;
+    left: 1rem;
+    background: var(--gold);
+    color: var(--rice);
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    padding: 0.15em 0.6em;
+    border-radius: 2px;
+  }
+
+  /* Details toggle */
+  details { }
+  details summary {
+    list-style: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--jade);
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    user-select: none;
+    padding: 0.4rem 0;
+    min-height: 44px; /* 觸控友善 */
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary .arr {
+    transition: transform 0.25s;
+    font-size: 0.72rem;
+  }
+  details[open] summary .arr { transform: rotate(90deg); }
+
+  /* Life rules */
+  .rules {
+    background: var(--deep);
+    color: var(--rice);
+    padding: 3.5rem 1.8rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .rules::before {
+    content: '天地人';
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 14rem;
+    color: rgba(255,255,255,0.02);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .rules-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.8rem;
+    color: #d4b96a;
+    margin-bottom: 0.4rem;
+  }
+  .rules-sub {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--aged);
+    margin-bottom: 2.5rem;
+  }
+
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .rule-item {
+    border-top: 1px solid rgba(201,185,154,0.3);
+    padding-top: 1.2rem;
+    position: relative;
+  }
+
+  .rule-num {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 3.5rem;
+    color: rgba(212,185,106,0.2);
+    line-height: 1;
+    margin-bottom: -1rem;
+  }
+
+  .rule-head {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.35rem;
+    color: #d4b96a;
+    margin-bottom: 0.6rem;
+  }
+
+  .rule-body {
+    font-size: 0.95rem;
+    line-height: 2;
+    color: rgba(245,239,224,0.85);
+  }
+
+  /* Footer */
+  footer {
+    background: var(--deep);
+    border-top: 1px solid rgba(201,185,154,0.15);
+    text-align: center;
+    padding: 2rem 1.5rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    color: var(--aged);
+    line-height: 2;
+  }
+  footer a {
+    color: var(--gold);
+    text-decoration: none;
+  }
+
+  /* 底部快選列 */
+  .quick-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 600px;
+    background: rgba(44,31,14,0.96);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(201,185,154,0.25);
+    display: flex;
+    z-index: 200;
+  }
+
+  .qnav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 0.55rem 0.1rem 0.65rem;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--aged);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.03em;
+    transition: color 0.2s, background 0.2s;
+    border-right: 1px solid rgba(201,185,154,0.1);
+    line-height: 1.3;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .qnav-btn:last-child { border-right: none; }
+  .qnav-btn .qicon { font-size: 1.1rem; line-height: 1; transition: transform 0.2s; }
+  .qnav-btn .qlabel { white-space: nowrap; }
+  .qnav-btn:hover, .qnav-btn.active { color: #d4b96a; background: rgba(255,255,255,0.05); }
+  .qnav-btn.active .qicon { transform: scale(1.2); }
+
+  body { padding-bottom: 64px; }
+
+</style>
+</head>
+<body>
+
+<!-- 底部快選列 -->
+<nav class="quick-nav" aria-label="快速跳轉">
+  <button class="qnav-btn active" data-target="hero">
+    <span class="qicon">🌿</span>
+    <span class="qlabel">首頁</span>
+  </button>
+  <button class="qnav-btn" data-target="t1">
+    <span class="qicon">🌹</span>
+    <span class="qlabel">玫瑰花</span>
+  </button>
+  <button class="qnav-btn" data-target="t2">
+    <span class="qicon">🌼</span>
+    <span class="qlabel">菊花</span>
+  </button>
+  <button class="qnav-btn" data-target="t3">
+    <span class="qicon">🤍</span>
+    <span class="qlabel">茉莉花</span>
+  </button>
+  <button class="qnav-btn" data-target="t4">
+    <span class="qicon">🌾</span>
+    <span class="qlabel">金銀花</span>
+  </button>
+  <button class="qnav-btn" data-target="t5">
+    <span class="qicon">🌺</span>
+    <span class="qlabel">洛神花</span>
+  </button>
+  <button class="qnav-btn" data-target="rules">
+    <span class="qicon">☯</span>
+    <span class="qlabel">法則</span>
+  </button>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-ornament">護肝</div>
+  <div class="season-badge">中醫夏季養生</div>
+  <h1 class="hero-title">肝最喜歡的<br>五款花茶</h1>
+  <div class="hero-divider"><span></span><i>✦</i><span></span></div>
+  <p class="hero-sub">肝五行屬木，喜調達而惡抑鬱。花類藥材清陽生散，富含揮發油，能引導體內鬱結肝氣向外宣散，契合肝臟生理特性。</p>
+  <p class="scroll-hint">↓ 向下瀏覽</p>
+</section>
+
+<!-- Principle -->
+<div class="principle-bar">
+  辨證論治 · 依據自身<strong>氣鬱 · 火旺 · 濕熱 · 陰虛</strong>，選擇最適合的那一杯茶，切勿盲目偏食單一寒涼之物
+</div>
+
+<!-- Section label -->
+<div class="section-label">
+  <h2>五款護肝花茶</h2>
+  <p>FIVE LIVER-NOURISHING FLOWER TEAS</p>
+</div>
+
+<!-- Tea cards -->
+<main class="teas">
+
+  <!-- 1 玫瑰花茶 -->
+  <article class="tea-card" id="t1">
+    <div class="card-header">
+      <div class="card-icon">🌹</div>
+      <div class="card-meta">
+        <div class="card-num">NO. 01</div>
+        <div class="card-name">玫瑰花茶</div>
+        <div class="card-tag">疏肝理氣 · 活血解鬱</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="info-block">
+        <div class="info-label">適用對象</div>
+        <div class="info-text">工作壓力大、常生悶氣、胸腹兩脅脹痛；月經來潮時有黑血塊且痛經劇烈（如子宮肌瘤、乳腺增生初期）者。</div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-label">建議配方</div>
+        <div class="formula-pills">
+          <span class="pill">乾玫瑰花蕾 5–8 朵</span>
+          <span class="pill">陳皮 3g</span>
+          <span class="pill">紅棗 2 枚（掰開）</span>
+        </div>
+      </div>
+
+      <div class="brew-steps">
+        <div class="info-label" style="margin-bottom:0.5rem;">沖泡要訣</div>
+        勿用 100°C 沸水直沖，以免破壞揮發油。請以 <strong>80–85°C</strong> 熱水沖泡，加蓋悶 <strong>5–8 分鐘</strong>。<br>
+        最佳飲用時機：下午 2–3 點心煩氣躁時。
+      </div>
+
+      <details>
+        <summary><span class="arr">▶</span> 展開臨床案例</summary>
+        <div class="case-box" style="margin-top:0.8rem;">
+          一名 48 歲外商女主管，長期肝氣鬱結，重度憂鬱邊緣，子宮肌瘤 5 公分。搭配玫瑰花、陳皮、枸杞、丹參代茶飲，三個月後經痛與血塊完全消失，肌瘤縮小至 2 公分。
+        </div>
+      </details>
+
+      <div class="warning-box">
+        <span class="warn-icon">⚠</span>
+        <span><strong>禁忌：</strong>玫瑰花具活血作用，<strong>孕婦禁用</strong>；經血量極大者於經期必須停用。</span>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- 2 菊花茶 -->
+  <article class="tea-card" id="t2">
+    <div class="card-header">
+      <div class="card-icon">🌼</div>
+      <div class="card-meta">
+        <div class="card-num">NO. 02</div>
+        <div class="card-name">菊花茶</div>
+        <div class="card-tag">清肝火 · 平肝陽 · 明目降壓</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="info-block">
+        <div class="info-label">適用對象</div>
+        <div class="info-text">天天熬夜、喜食炸物，早起口苦口乾、眼睛紅腫乾澀、偏頭痛（兩側太陽穴）、脾氣暴躁或有高血壓、耳鳴者。</div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-label">品種選擇</div>
+        <div class="info-text">
+          <strong>杭白菊／雛菊</strong>：清熱降火、平肝明目（眼紅、高血壓首選）<br>
+          <strong>黃山貢菊</strong>：疏散風熱（冷氣吹多引起的感冒初期）<br>
+          <strong>野菊花</strong>：解毒消腫力強，但極寒，絕不可久服
+        </div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-label">建議配方</div>
+        <div class="formula-pills">
+          <span class="pill">杭白菊 5–8 朵</span>
+          <span class="pill">枸杞 15 粒</span>
+        </div>
+        <div class="info-text" style="margin-top:0.5rem;font-size:0.9rem;color:var(--sage);">「杞菊茶」—— 一清一補，寒不著、燥不烈。</div>
+      </div>
+
+      <div class="brew-steps">
+        <div class="info-label" style="margin-bottom:0.5rem;">沖泡要訣</div>
+        菊花較耐泡，以 <strong>90–95°C</strong> 熱水沖泡，加蓋悶 <strong>5 分鐘</strong>，水呈微黃色即可。
+      </div>
+
+      <details>
+        <summary><span class="arr">▶</span> 展開臨床案例</summary>
+        <div class="case-box" style="margin-top:0.8rem;">
+          一名 55 歲計程車司機，因烈日駕車加喝提神飲料，肝火上炎、血壓飆升並引發眼底微血管破裂出血。服用杭白菊、枸杞、決明子（微炒）、夏枯草泡水，兩週後紅血絲與出血完全吸收，血壓恢復正常。
+        </div>
+      </details>
+
+      <div class="warning-box">
+        <span class="warn-icon">⚠</span>
+        <span><strong>禁忌：</strong>菊花性微寒，<strong>脾胃虛寒、易腹瀉、怕冷</strong>者，請在茶中加入 3 片生薑或數顆紅棗以中和寒性。</span>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- 3 茉莉花茶 -->
+  <article class="tea-card" id="t3">
+    <div class="card-header">
+      <div class="card-icon">🤍</div>
+      <div class="card-meta">
+        <div class="card-num">NO. 03</div>
+        <div class="card-name">茉莉花茶</div>
+        <div class="card-tag">理氣和中 · 調和肝脾</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="info-block">
+        <div class="info-label">適用對象</div>
+        <div class="info-text">肝木剋脾土體質：一緊張就胃痛、易腹瀉（大腸激躁症）、胃酸逆流、火燒心、吃不下飯、一直打嗝者。</div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-label">建議配方</div>
+        <div class="formula-pills">
+          <span class="pill">乾茉莉花 2–3g</span>
+          <span class="pill">龍井或碧螺春（無胃潰瘍者）</span>
+          <span class="pill">天然冰糖（胃酸多者）</span>
+        </div>
+      </div>
+
+      <div class="brew-steps">
+        <div class="info-label" style="margin-bottom:0.5rem;">沖泡要訣 ＋ 獨家秘訣</div>
+        茉莉花嬌嫩，請用 <strong>80–85°C</strong> 水溫沖泡。<br><br>
+        🌸 <strong>飲前先聞香：</strong>雙手捧杯，鼻子湊近深呼吸茶杯散發的芳香之氣。芳香入肺能瞬間打通胸膈的鬱結，這才是治病精髓。
+      </div>
+
+      <details>
+        <summary><span class="arr">▶</span> 展開臨床案例</summary>
+        <div class="case-box" style="margin-top:0.8rem;">
+          一名 60 歲退休企業家，因長年應酬退休後出現胃脹、逆流與焦慮失眠，制酸劑服用一年多無效。改用乾茉莉花 3g、生山楂 3 片、茯苓 5g 沖泡，兩週後胃脹與逆流完全消失，睡眠大幅改善。
+        </div>
+      </details>
+
+      <div class="warning-box">
+        <span class="warn-icon">⚠</span>
+        <span><strong>禁忌：</strong>空腹不宜飲用過濃茉莉綠茶，以免刺激胃黏膜引發心慌、頭暈。</span>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- 4 金銀花茶 -->
+  <article class="tea-card" id="t4">
+    <div class="card-header">
+      <div class="card-icon">🌾</div>
+      <div class="card-meta">
+        <div class="card-num">NO. 04</div>
+        <div class="card-name">金銀花茶</div>
+        <div class="card-tag">清熱解毒 · 排毒養顏</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="info-block">
+        <div class="info-label">適用對象</div>
+        <div class="info-text">肝膽濕熱體質：臉部（下顎／兩頰）長紅腫囊腫型大痘、易長濕疹汗皰疹、嚴重口臭、頑固性便秘（大便奇臭或如羊屎）者。</div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-label">建議配方</div>
+        <div class="formula-pills">
+          <span class="pill">金銀花 5–10g</span>
+          <span class="pill">生甘草 2–3 片</span>
+        </div>
+        <div class="info-text" style="margin-top:0.5rem;font-size:0.9rem;color:var(--sage);">千年古方「銀花甘草湯」—— 甘草調和藥性，防金銀花過寒傷胃。</div>
+      </div>
+
+      <div class="brew-steps">
+        <div class="info-label" style="margin-bottom:0.5rem;">沖泡要訣</div>
+        金銀花需較高水溫釋放成分，用 <strong>90–100°C</strong> 滾水沖泡，加蓋悶 <strong>10 分鐘</strong>。
+      </div>
+
+      <details>
+        <summary><span class="arr">▶</span> 展開臨床案例</summary>
+        <div class="case-box" style="margin-top:0.8rem;">
+          一名 35 歲女性，每年夏天嚴重囊腫痘與便秘，抗生素和 A 酸停藥即復發。改以金銀花 10g、生甘草 3g、連翹 5g、蒲公英 5g 代水飲，三天後排出宿便，一週內紅腫痘痘全部消退。
+        </div>
+      </details>
+
+      <div class="warning-box">
+        <span class="warn-icon">⚠</span>
+        <span><strong>禁忌：</strong>屬急救茶飲，<strong>症狀消失後立即停用</strong>。脾胃虛寒、易腹瀉、<strong>女性經期與孕婦絕對禁用</strong>，不可作日常保健茶長期飲用。</span>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- 5 洛神花茶 -->
+  <article class="tea-card" id="t5">
+    <div class="card-header">
+      <div class="card-icon">🌺</div>
+      <div class="card-meta">
+        <div class="card-num">NO. 05</div>
+        <div class="card-name">洛神花茶</div>
+        <div class="card-tag">滋肝陰 · 養肝血 · 抗老防衰</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="info-block">
+        <div class="info-label">適用對象</div>
+        <div class="info-text">肝腎陰虛、虛火上炎體質：夜間 1–3 點易驚醒、頭髮乾枯、指甲薄脆、四肢麻木，以及更年期五心煩熱、兩頰大片黃褐斑（肝斑）者。</div>
+      </div>
+
+      <div class="info-block">
+        <div class="info-label">建議配方</div>
+        <div class="formula-pills">
+          <span class="pill">乾洛神花 3–5 朵</span>
+          <span class="pill">桑椹乾一小把</span>
+          <span class="pill">純天然蜂蜜或冰糖</span>
+        </div>
+      </div>
+
+      <div class="brew-steps">
+        <div class="info-label" style="margin-bottom:0.5rem;">沖泡要訣</div>
+        用 <strong>85–90°C</strong> 熱水沖泡，悶 <strong>5–8 分鐘</strong>。<br>
+        🍯 蜂蜜務必等水溫降至 <strong>40°C 以下</strong>（溫不燙手）再加入，高溫會破壞活性酵素並使湯頭發酸。
+      </div>
+
+      <details>
+        <summary><span class="arr">▶</span> 展開臨床案例</summary>
+        <div class="case-box" style="margin-top:0.8rem;">
+          一名 52 歲更年期婦女，夜間盜汗、嚴重失眠，兩頰大片黃褐斑。服用洛神花 5 朵、桑椹乾 10g、百合 5g 泡茶加蜂蜜，一個月後盜汗消失並成功停用安眠藥，三個月後黃褐斑淡化八成。
+        </div>
+      </details>
+
+      <div class="warning-box">
+        <span class="warn-icon">⚠</span>
+        <span><strong>禁忌：</strong>洛神花極酸，<strong>胃酸過多、嚴重胃潰瘍、胃食道逆流</strong>者不可飲用；<strong>腎功能不全</strong>者慎用；<strong>孕婦禁用</strong>。</span>
+      </div>
+
+    </div>
+  </article>
+
+</main>
+
+<!-- Life rules -->
+<section class="rules" id="rules">
+  <div class="rules-title">養肝黃金生活法則</div>
+  <p class="rules-sub">GOLDEN LIFESTYLE PRINCIPLES FOR LIVER HEALTH</p>
+  <div class="rules-grid">
+    <div class="rule-item">
+      <div class="rule-num">一</div>
+      <div class="rule-head">子丑時辰 · 早眠護肝</div>
+      <div class="rule-body">
+        晚上 11 點至凌晨 3 點為肝膽經氣血最旺、自我修復的黃金四小時。<br><br>
+        中醫講「人臥則血歸於肝」，務必在晚上 <strong style="color:#d4b96a;">11 點前</strong>躺好準備入睡。不睡覺則血液無法回流，肝血將逐漸耗損。
+      </div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-num">二</div>
+      <div class="rule-head">怒傷肝 · 靜心疏鬱</div>
+      <div class="rule-body">
+        暴怒使肝氣急劇上逆，易誘發腦中風；生悶氣最傷腺體，易形成乳腺、甲狀腺或子宮腫瘤。<br><br>
+        快生氣時：泡玫瑰花茶聞香，或敲打大腿外側<strong style="color:#d4b96a;">膽經</strong>（大腿根至膝蓋，左右各 50 下）宣散肝膽鬱氣。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>內容整理自「倪師國學健康養生官方」影片</p>
+  <p style="margin-top:0.5rem;">本頁僅供中醫養生知識分享，不取代專業醫療診斷與建議</p>
+  <p style="margin-top:0.5rem;color:rgba(201,185,154,0.4);">· 辨證論治 · 因人制宜 ·</p>
+</footer>
+
+<script>
+  const sections = ['hero', 't1', 't2', 't3', 't4', 't5', 'rules'];
+  const btns = document.querySelectorAll('.qnav-btn');
+
+  // 點擊跳轉
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.target;
+      const el = target === 'hero'
+        ? document.querySelector('.hero')
+        : document.getElementById(target);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // 滾動時高亮對應按鈕
+  function updateNav() {
+    let current = 0;
+    sections.forEach((id, i) => {
+      const el = id === 'hero'
+        ? document.querySelector('.hero')
+        : document.getElementById(id);
+      if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.45) {
+        current = i;
+      }
+    });
+    btns.forEach((b, i) => b.classList.toggle('active', i === current));
+  }
+
+  window.addEventListener('scroll', updateNav, { passive: true });
+</script>
+</body>
+</html>
