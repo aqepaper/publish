@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>報名測試系統操作指南</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:    #1a3a5c;
+  --gold:   #2980b9;
+  --sage:   #1a6e8e;
+  --rose:   #c0392b;
+  --cream:  #eef5fb;
+  --border: #b8d4e8;
+  --light:  #daeaf6;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 18px;
+  line-height: 1.8;
+  color: var(--ink);
+  background: var(--cream);
+}
+
+/* ── 左側導覽 ── */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 240px;
+  height: 100vh;
+  background: #1a3a5c;
+  padding: 28px 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 14px;
+  color: #2980b9;
+  letter-spacing: 2px;
+  padding: 0 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 12px;
+}
+.nav-item {
+  display: block;
+  padding: 10px 20px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+  line-height: 1.5;
+}
+.nav-item:hover {
+  color: white;
+  background: rgba(255,255,255,0.07);
+  border-left-color: #2980b9;
+}
+.nav-item.chapter {
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  font-size: 15px;
+  margin-top: 8px;
+}
+.nav-item.sub {
+  padding-left: 32px;
+  font-size: 13px;
+}
+
+/* ── 主內容 ── */
+.main {
+  margin-left: 240px;
+  padding: 48px 56px 80px;
+  max-width: 960px;
+}
+
+/* ── 封面 ── */
+.cover {
+  text-align: center;
+  padding: 60px 0 48px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 56px;
+}
+.cover-badge {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: #2980b9;
+  text-transform: uppercase;
+  border: 1px solid #2980b9;
+  padding: 4px 16px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.cover h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+.cover-sub {
+  font-size: 18px;
+  color: #888;
+  margin-top: 12px;
+}
+.cover-rule {
+  width: 60px; height: 3px;
+  background: linear-gradient(90deg, transparent, #2980b9, transparent);
+  margin: 20px auto;
+}
+
+/* ── 章節標題 ── */
+.chapter-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 56px 0 28px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--border);
+}
+.chapter-num {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: #1a3a5c;
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 20px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.chapter-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* ── 小節標題 ── */
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--sage);
+  margin: 36px 0 16px;
+  padding-left: 14px;
+  border-left: 4px solid #2980b9;
+}
+
+.sub-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 24px 0 12px;
+}
+
+/* ── 段落 ── */
+p {
+  font-size: 18px;
+  line-height: 1.85;
+  color: #333;
+  margin-bottom: 14px;
+}
+
+/* ── 步驟清單 ── */
+.steps {
+  list-style: none;
+  counter-reset: step;
+  margin: 16px 0 20px;
+}
+.steps li {
+  counter-increment: step;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 12px;
+  font-size: 18px;
+  line-height: 1.7;
+}
+.steps li::before {
+  content: counter(step);
+  min-width: 30px; height: 30px;
+  background: #2980b9;
+  color: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* ── 項目清單 ── */
+.bullets {
+  list-style: none;
+  margin: 12px 0 20px;
+}
+.bullets li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 18px;
+  line-height: 1.7;
+}
+.bullets li::before {
+  content: '▸';
+  color: #2980b9;
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ── 提示框 ── */
+.note {
+  background: #e8f4fd;
+  border: 1px solid #a8d4f0;
+  border-left: 5px solid #2980b9;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 18px;
+  color: #1a4a6e;
+  line-height: 1.7;
+}
+.note-sage {
+  background: #e0f0f8;
+  border: 1px solid #90c4e0;
+  border-left: 5px solid var(--sage);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 18px;
+  color: #1a4a6e;
+  line-height: 1.7;
+}
+
+/* ── 表格 ── */
+.tbl-wrap { overflow-x: auto; margin: 20px 0; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 18px;
+}
+th {
+  background: #1a3a5c;
+  color: white;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 18px;
+}
+td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.6;
+  vertical-align: top;
+}
+tr:nth-child(even) td { background: var(--light); }
+tr:hover td { background: #d0e8f5; }
+
+/* ── 帳號表 ── */
+.accounts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+}
+.account-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.account-id {
+  font-size: 16px;
+  font-family: monospace;
+  color: var(--sage);
+  font-weight: 600;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+.account-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ── 狀態標籤 ── */
+.tag-green {
+  display: inline-block;
+  background: #d4edda;
+  color: #155724;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 17px;
+  font-weight: 600;
+}
+.tag-red {
+  display: inline-block;
+  background: #f8d7da;
+  color: #721c24;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+/* ── 流程圖 ── */
+.flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.flow-box {
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  text-align: center;
+  min-width: 100px;
+}
+.flow-box.active {
+  border-color: #2980b9;
+  background: #e8f4fd;
+}
+.flow-arrow {
+  font-size: 20px;
+  color: #2980b9;
+  padding: 0 8px;
+}
+
+/* ── 欄位標籤 ── */
+.col-badge {
+  display: inline-block;
+  background: #1a3a5c;
+  color: white;
+  border-radius: 4px;
+  padding: 1px 8px;
+  font-size: 15px;
+  font-family: monospace;
+  margin-right: 4px;
+}
+
+/* ── 頁尾 ── */
+.footer {
+  margin-top: 80px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 16px;
+  color: #aaa;
+}
+
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 24px 16px 60px; }
+  body { font-size: 18px; }
+  p, .steps li, .bullets li, .note, .note-sage, table { font-size: 18px; }
+  .accounts-grid { grid-template-columns: 1fr; }
+  .cover h1 { font-size: 26px; }
+  .chapter-title { font-size: 22px; }
+  .flow { gap: 4px; }
+  .flow-box { padding: 8px 10px; font-size: 16px; min-width: 70px; }
+}
+
+@media print {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 左側導覽 -->
+<nav class="sidebar">
+  <div class="sidebar-title">操作指南</div>
+  <a class="nav-item chapter" href="#cover">封面</a>
+  <a class="nav-item chapter" href="#ch1">一、學員操作說明</a>
+  <a class="nav-item sub" href="#ch1-1">進入報名頁面</a>
+  <a class="nav-item sub" href="#ch1-2">身份驗證</a>
+  <a class="nav-item sub" href="#ch1-3">確認個人資料</a>
+  <a class="nav-item sub" href="#ch1-4">填寫報名資料</a>
+  <a class="nav-item sub" href="#ch1-5">報名完成</a>
+  <a class="nav-item sub" href="#ch1-6">特殊狀況</a>
+  <a class="nav-item sub" href="#ch1-7">登入帳號</a>
+  <a class="nav-item chapter" href="#ch2">二、管理者操作說明</a>
+  <a class="nav-item sub" href="#ch2-1">進入管理後台</a>
+  <a class="nav-item sub" href="#ch2-2">統計總覽</a>
+  <a class="nav-item sub" href="#ch2-3">系統設定</a>
+  <a class="nav-item sub" href="#ch2-4">取消報名</a>
+  <a class="nav-item chapter" href="#ch3">三、試算表分頁說明</a>
+  <a class="nav-item sub" href="#ch3-1">名冊分頁</a>
+  <a class="nav-item sub" href="#ch3-2">報名結果分頁</a>
+  <a class="nav-item sub" href="#ch3-3">系統設定分頁</a>
+</nav>
+
+<!-- 主內容 -->
+<div class="main">
+
+  <!-- 封面 -->
+  <div class="cover" id="cover">
+    <div class="cover-badge">User Manual</div>
+    <h1>普高禪修班<br>報名測試系統操作指南</h1>
+    <div class="cover-rule"></div>
+    <div class="cover-sub">版本 1.0　2026 年 6 月</div>
+  </div>
+
+  <!-- ══ 第一章 ══ -->
+  <div id="ch1">
+    <div class="chapter-header">
+      <div class="chapter-num">一</div>
+      <div class="chapter-title">學員操作說明</div>
+    </div>
+    <p>本系統為普高禪修班線上報名平台，學員可透過 Google Sites 頁面完成報名，全程操作約 2～3 分鐘。</p>
+
+    <!-- 流程總覽 -->
+    <div class="flow">
+      <div class="flow-box active">身份驗證</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box active">確認資料</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box active">填寫報名</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box active">送出完成</div>
+    </div>
+
+    <!-- 1.1 -->
+    <div class="section-title" id="ch1-1">1.1 進入報名頁面</div>
+    <ol class="steps">
+      <li>開啟瀏覽器（建議使用 Chrome）</li>
+      <li>前往普高禪修班 Google Sites 報名頁面</li>
+      <li>點選「線上報名」頁籤</li>
+    </ol>
+
+    <!-- 1.2 -->
+    <div class="section-title" id="ch1-2">1.2 步驟一：身份驗證</div>
+    <p>畫面顯示「🔍 身份驗證」，請在輸入框中輸入以下任一項目：</p>
+    <ul class="bullets">
+      <li>姓名（例如：林靜楓）</li>
+      <li>10 位數學號（例如：0123456789）</li>
+    </ul>
+    <div class="note">注意：學號必須為完整的 10 位數字，請勿省略前面的 0。</div>
+    <p>輸入完成後，點選「查　詢　→」按鈕。</p>
+
+    <div class="sub-title">若姓名輸入有誤（模糊比對）</div>
+    <p>系統會自動比對相似名單，顯示「🔎 您是指這位嗎？」並列出候選人，請點選正確的姓名繼續。</p>
+
+    <div class="sub-title">若查無資料</div>
+    <p>畫面顯示「查無此姓名或學號，請確認後重新輸入」，請再次確認輸入內容是否正確。</p>
+
+    <!-- 1.3 -->
+    <div class="section-title" id="ch1-3">1.3 步驟二：確認個人資料</div>
+    <p>系統帶出以下個人資料，請確認是否正確：</p>
+    <ul class="bullets">
+      <li>學號</li>
+      <li>姓名</li>
+      <li>班別</li>
+      <li>電話</li>
+    </ul>
+    <p>若資料正確，點選「✅ 是本人，繼續報名」。</p>
+    <p>若不是本人，點選「❌ 不是我，重新輸入」返回查詢。</p>
+
+    <!-- 1.4 -->
+    <div class="section-title" id="ch1-4">1.4 步驟三：填寫報名資料</div>
+    <p>確認身份後，填寫以下資訊：</p>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>欄位</th><th>說明</th><th>必填</th></tr>
+        <tr><td>報名梯次</td><td>選擇第一、二或三梯次</td><td style="color:#c0392b;font-weight:600">必填</td></tr>
+        <tr><td>同行朋友姓名</td><td>多人請用頓號分隔，例如：李四、王五</td><td style="color:#888">選填</td></tr>
+      </table>
+    </div>
+    <p>填寫完成後，點選「送出報名　✓」。</p>
+
+    <!-- 1.5 -->
+    <div class="section-title" id="ch1-5">1.5 步驟四：報名完成</div>
+    <p>畫面顯示「🎉 報名成功！」代表報名資料已成功記錄。</p>
+    <p>若需為其他人報名，點選「← 返回報名首頁」重新開始。</p>
+
+    <!-- 1.6 -->
+    <div class="section-title" id="ch1-6">1.6 特殊狀況說明</div>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>狀況</th><th>說明</th></tr>
+        <tr>
+          <td>顯示「您已完成報名」</td>
+          <td>您已報名過，無需重複填寫。如需更改請聯絡管理員。</td>
+        </tr>
+        <tr>
+          <td>顯示「曾報名過但已取消」</td>
+          <td>您的報名已被取消，可重新填寫報名資料。</td>
+        </tr>
+        <tr>
+          <td>顯示「報名系統暫停開放」</td>
+          <td>報名系統尚未開放或已截止，請聯絡主辦單位。</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 1.7 -->
+    <div class="section-title" id="ch1-7">1.7 可使用的登入帳號</div>
+    <p>以下為系統中已建立的學員帳號，可使用學號或姓名登入：</p>
+    <div class="accounts-grid">
+      <div class="account-card"><span class="account-id">0123456789</span><span class="account-name">林靜楓</span></div>
+      <div class="account-card"><span class="account-id">0234567891</span><span class="account-name">熊宣涵</span></div>
+      <div class="account-card"><span class="account-id">0345678912</span><span class="account-name">蔡心誼</span></div>
+      <div class="account-card"><span class="account-id">0456789123</span><span class="account-name">郭旭洲</span></div>
+      <div class="account-card"><span class="account-id">0567891234</span><span class="account-name">蕭孟華</span></div>
+      <div class="account-card"><span class="account-id">0678912345</span><span class="account-name">蔡佩儒</span></div>
+      <div class="account-card"><span class="account-id">0789123456</span><span class="account-name">吳麗雲</span></div>
+      <div class="account-card"><span class="account-id">0891234567</span><span class="account-name">葉立橙</span></div>
+      <div class="account-card"><span class="account-id">0912345678</span><span class="account-name">劉婷繡</span></div>
+      <div class="account-card"><span class="account-id">1023456789</span><span class="account-name">陳秀卿</span></div>
+      <div class="account-card"><span class="account-id">1134567890</span><span class="account-name">陳麗萍</span></div>
+      <div class="account-card"><span class="account-id">1245678901</span><span class="account-name">柳雪美</span></div>
+      <div class="account-card"><span class="account-id">1356789012</span><span class="account-name">高如巧</span></div>
+      <div class="account-card"><span class="account-id">1467890123</span><span class="account-name">陳錦華</span></div>
+      <div class="account-card"><span class="account-id">1578901234</span><span class="account-name">郭雅珍</span></div>
+      <div class="account-card"><span class="account-id">1689012345</span><span class="account-name">馮素琴</span></div>
+      <div class="account-card"><span class="account-id">1790123456</span><span class="account-name">胡益鐘</span></div>
+      <div class="account-card"><span class="account-id">1801234567</span><span class="account-name">朱游菽</span></div>
+    </div>
+    <div class="note-sage">以上學號或姓名皆可用於身份驗證登入。</div>
+  </div>
+
+  <!-- ══ 第二章 ══ -->
+  <div id="ch2">
+    <div class="chapter-header">
+      <div class="chapter-num">二</div>
+      <div class="chapter-title">管理者操作說明</div>
+    </div>
+    <p>管理後台提供統計資料查看與系統設定功能，僅限管理員使用。</p>
+
+    <!-- 2.1 -->
+    <div class="section-title" id="ch2-1">2.1 進入管理後台</div>
+    <ol class="steps">
+      <li>在瀏覽器開啟管理後台書籤網址</li>
+      <li>確認使用管理員 Google 帳號登入</li>
+      <li>頁面顯示「普高報名系統管理後台」即進入成功</li>
+    </ol>
+    <div class="note">管理後台網址請妥善保管，勿分享給一般學員。</div>
+
+    <!-- 2.2 -->
+    <div class="section-title" id="ch2-2">2.2 統計總覽</div>
+    <p>後台首頁顯示四個統計卡片：</p>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>卡片</th><th>說明</th></tr>
+        <tr><td>報名總人數</td><td>包含有效報名與已取消的總數</td></tr>
+        <tr><td>有效報名</td><td>目前狀態為「已報名」的人數</td></tr>
+        <tr><td>已取消</td><td>狀態為「已取消」的人數</td></tr>
+        <tr><td>同行人次</td><td>所有報名者填寫的同行朋友總人次</td></tr>
+      </table>
+    </div>
+    <p>畫面下方另有「各梯次人數」與「各班別人數」橫條圖分析。</p>
+    <p>點選右上角「↺ 重新整理」可取得最新資料。</p>
+
+    <!-- 2.3 -->
+    <div class="section-title" id="ch2-3">2.3 系統設定</div>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>設定項目</th><th>操作說明</th></tr>
+        <tr>
+          <td>報名系統狀態</td>
+          <td>切換開關即可開放或關閉報名系統。關閉後學員無法進行報名。</td>
+        </tr>
+        <tr>
+          <td>取消報名截止日期</td>
+          <td>設定允許取消報名的最後日期。截止日當天起無法取消。</td>
+        </tr>
+        <tr>
+          <td>梯次名稱設定</td>
+          <td>修改三個梯次的顯示名稱，報名頁面下拉選單同步更新。</td>
+        </tr>
+      </table>
+    </div>
+    <p>設定完成後點選「儲存設定」，顯示「✓ 設定已儲存」表示成功。</p>
+
+    <!-- 2.4 -->
+    <div class="section-title" id="ch2-4">2.4 取消報名作業</div>
+    <p>學員取消報名由管理員在 Google 試算表中操作：</p>
+    <ol class="steps">
+      <li>開啟 Google 試算表「報名結果」分頁</li>
+      <li>找到該學員的報名記錄</li>
+      <li>將 G 欄「狀態」由 <span class="tag-green">已報名</span> 改為 <span class="tag-red">已取消</span>（下拉選單選擇）</li>
+      <li>在 H 欄「取消原因」填入簡短說明</li>
+      <li>儲存試算表</li>
+    </ol>
+    <div class="note-sage">已取消的學員可重新登入系統再次報名。</div>
+  </div>
+
+  <!-- ══ 第三章 ══ -->
+  <div id="ch3">
+    <div class="chapter-header">
+      <div class="chapter-num">三</div>
+      <div class="chapter-title">後台試算表分頁說明</div>
+    </div>
+    <p>Google 試算表共有三個分頁，各有不同用途。</p>
+
+    <!-- 3.1 -->
+    <div class="section-title" id="ch3-1">3.1 分頁一：名冊</div>
+    <p>儲存所有學員的基本資料，系統查詢身份時會比對此分頁。</p>
+    <div class="tbl-wrap">
+      <table>
+        <tr>
+          <th><span class="col-badge">A</span>學號</th>
+          <th><span class="col-badge">B</span>姓名</th>
+          <th><span class="col-badge">C</span>班別</th>
+          <th><span class="col-badge">D</span>電話</th>
+          <th><span class="col-badge">E</span>Email</th>
+        </tr>
+        <tr>
+          <td>10位數字<br>純文字格式</td>
+          <td>中文姓名</td>
+          <td>如：初級班</td>
+          <td>手機號碼</td>
+          <td>電子郵件（選填）</td>
+        </tr>
+        <tr>
+          <td>0123456789</td>
+          <td>林靜楓</td>
+          <td>初級班</td>
+          <td>0912345678</td>
+          <td>lin@example.com</td>
+        </tr>
+      </table>
+    </div>
+    <div class="note">A欄學號需設定為純文字格式，避免前導 0 被自動刪除。</div>
+
+    <!-- 3.2 -->
+    <div class="section-title" id="ch3-2">3.2 分頁二：報名結果</div>
+    <p>每筆報名記錄自動寫入此分頁，管理員可在此查看與管理所有報名資料。</p>
+    <div class="tbl-wrap">
+      <table>
+        <tr>
+          <th><span class="col-badge">A</span>報名時間</th>
+          <th><span class="col-badge">B</span>學號</th>
+          <th><span class="col-badge">C</span>姓名</th>
+          <th><span class="col-badge">D</span>班別</th>
+          <th><span class="col-badge">E</span>梯次</th>
+          <th><span class="col-badge">F</span>同行朋友</th>
+          <th><span class="col-badge">G</span>狀態</th>
+          <th><span class="col-badge">H</span>取消原因</th>
+        </tr>
+        <tr>
+          <td>2026/06/01 14:30</td>
+          <td>0123456789</td>
+          <td>林靜楓</td>
+          <td>初級班</td>
+          <td>第一梯次</td>
+          <td>熊宣涵</td>
+          <td><span class="tag-green">已報名</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>2026/06/02 09:15</td>
+          <td>0234567891</td>
+          <td>熊宣涵</td>
+          <td>中級班</td>
+          <td>第二梯次</td>
+          <td></td>
+          <td><span class="tag-red">已取消</span></td>
+          <td>臨時有事</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="sub-title">G 欄「狀態」說明</div>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>狀態值</th><th>說明</th></tr>
+        <tr>
+          <td><span class="tag-green">已報名</span></td>
+          <td>有效報名，學員不可重複報名</td>
+        </tr>
+        <tr>
+          <td><span class="tag-red">已取消</span></td>
+          <td>報名已取消，學員可重新報名</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 3.3 -->
+    <div class="section-title" id="ch3-3">3.3 分頁三：系統設定</div>
+    <p>控制整個報名系統的運作參數，管理員可直接修改或透過管理後台介面調整。</p>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>A欄 項目</th><th>B欄 設定值</th><th>說明</th></tr>
+        <tr><td>報名系統狀態</td><td>開放 / 關閉</td><td>「開放」才能報名</td></tr>
+        <tr><td>取消截止日期</td><td>2026/06/30</td><td>此日期當天起不可取消</td></tr>
+        <tr><td>第一梯次名稱</td><td>第一梯次</td><td>報名頁下拉選單顯示名稱</td></tr>
+        <tr><td>第二梯次名稱</td><td>第二梯次</td><td>報名頁下拉選單顯示名稱</td></tr>
+        <tr><td>第三梯次名稱</td><td>第三梯次</td><td>報名頁下拉選單顯示名稱</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 頁尾 -->
+  <div class="footer">
+    普高禪修班報名測試系統　AQE@2026
+  </div>
+
+</div>
+
+</body>
+</html>
